@@ -37,7 +37,7 @@ def parse_learning_data(f):
 		for word in line.split():
 			word_parts = word.split("_")
 			if (len(word_parts) > 1):
-				token = tokens[word_parts[1][0]]
+				token = tokens.get(word_parts[1][0], Boring)
 				parsed_line.append((word_parts[0], token))
 			else:
 				parsed_line.append((word_parts[0], Boring))
