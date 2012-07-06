@@ -1,3 +1,6 @@
+import os
+
+#Tag types
 Empty = 0
 Unit = 1
 Quantity = 2
@@ -18,29 +21,40 @@ tokens = {
 	"b" : Boring
 }
 
-token_description = ["e", "u", "q", "f", "m", "t", "d", "b"]
+token_description = ["E", "U", "Q", "F", "M", "T", "D", "B"]
+token_description_verbose = ["Empty", "Unit", "Quantity", "Food", "Modifier", "Time", "Degrees", "Boring"]
 
-parsed_lines = []
 token_incidence = {}
 tuple_probability = []
+parsed_lines = []
 
+# Go through a tagged file and split it into
+# (word, token) tuples, line by line.
+# Appends results to parsed_lines array
+def parse_learning_data(f):
+	for line in f:
+		parsed_line = []
+		for word in line.split():
+			word_parts = word.split("_")
+			if (len(word_parts) > 1):
+				token = tokens[word_parts[1][0]]
+				parsed_line.append((word_parts[0], token))
+			else:
+				parsed_line.append((word_parts[0], Boring))
+		parsed_lines.append(parsed_line)
+
+# Initialize a table to hold probability relationships
 for row in range(8):
 	tuple_probability.append([])
 	for col in range(8):
 		tuple_probability[row].append(0)
 
-f = open("tagged_recipes/1.txt", "r")
-for line in f:
-	parsed_line = []
-	for word in line.split():
-		word_parts = word.split("_")
-		if (len(word_parts) > 1):
-			token = tokens[word_parts[1][0]]
-			parsed_line.append((word_parts[0], token))
-		else:
-			parsed_line.append((word_parts[0], Boring))
-	parsed_lines.append(parsed_line)
+# Load all the tagged_recipes file
+files = os.listdir("tagged_recipes")
+for f in files:
+	parse_learning_data(open("tagged_recipes/" + f))
 
+# Calculate the probability of a tuple occurance
 for line in parsed_lines:
 	for i in range(len(line)):
 		gram1 = ("", Empty)
@@ -51,13 +65,14 @@ for line in parsed_lines:
 		gram2 = line[i]
 		token2 = gram2[1] 
 
-		print gram1
-		print gram2
+		print "(%s, %s)" % (gram2[0], token_description_verbose[token2])
 
 		prob = tuple_probability[token1][token2]
 		tuple_probability[token1][token2] = prob+1
 
-print "   e   u   q   f   m   t   d   b"
+# Print out the probability results
+print "\nProbabilities: "
+print "   E   U   Q   F   M   T   D   B"
 for i in range(len(tuple_probability)):
 	row = tuple_probability[i]
 	print (token_description[i]),
