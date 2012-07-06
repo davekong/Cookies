@@ -80,4 +80,32 @@ for i in range(len(tuple_probability)):
 		print("%2d " % num),
 	print ""
 
+# Try to parse the untagged recipes
+untagged_files = os.listdir("recipes")
+tagged_tuple_lines = []
+for f in untagged_files:
+	text = open("recipes/" + f)
+	for line in text:
+		tagged_tuples = []
+		words = line.split()
+		prev_tag = Empty
+		for i in range(len(words)):
+			word = words[i]
+			array = tuple_probability[prev_tag]
+			best_tag = Boring
+			match = 0
+			for x in range(len(array)):
+				if array[x] > match:
+					match = array[x]
+					best_tag = x
+			prev_tag = best_tag
+			tagged_tuples.append((word, best_tag))
+		tagged_tuple_lines.append(tagged_tuples)
+
+for line in tagged_tuple_lines:
+	for pair in line:
+		print("(%s, %s)" % (pair[0], token_description_verbose[pair[1]])),
+	print "\n"
+
+
 
