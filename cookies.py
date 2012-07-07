@@ -24,10 +24,10 @@ token_description = ["U", "Q", "F", "M", "T", "D", "B"]
 token_description_verbose = ["Unit", "Quantity", "Food", "Modifier", "Time", "Degrees", "Boring"]
 
 tuple_probability = []
-number_probability = []
 start_tag_count = []
 tag_count = []
 parsed_lines = []
+dictionary = []
 
 # Go through a tagged file and split it into
 # (word, token) tuples, line by line.
@@ -54,9 +54,9 @@ def is_number(word):
 # Initialize a table to hold probability relationships
 for row in range(7):
 	tuple_probability.append([])
-	number_probability.append(0)
 	tag_count.append(0)
 	start_tag_count.append(0)
+	dictionary.append({})
 	for col in range(7):
 		tuple_probability[row].append(0)
 
@@ -78,20 +78,20 @@ for line in parsed_lines:
 
 			gram2 = line[i]
 			token2 = gram2[1] 
+			word2 = gram2[0]
 
 			prob = tuple_probability[token1][token2]
 			tuple_probability[token1][token2] = prob+1
 
-			if is_number(gram2[0]):
-				prob = number_probability[token2]
-				number_probability[token2] = prob+1
+			count = dictionary[token2].get(word2.upper(), 0)
+			dictionary[token2][word2.upper()] = count+1
 
 			count = tag_count[token2]
 			tag_count[token2] = count+1
 
 # Print out the probability results
 print "\nProbabilities: "
-print "   U   Q   F   M   T   D   B"
+print "     U     Q     F     M     T     D     B"
 for i in range(len(tuple_probability)):
 	row = tuple_probability[i]
 	print (token_description[i]),
@@ -117,7 +117,7 @@ def total_tag_count():
 
 def viderbi():
 
-	text = open("recipes/11.txt")
+	text = open("recipes/2.txt")
 	states = [0, 1, 2, 3, 4, 5, 6]
 
 	for line in text:
@@ -130,13 +130,9 @@ def viderbi():
 			word = words[i]
 			
 			for state in states: #for each state
-				# There are 2 output probabilities:
-					# - A number
-					# - Not a number
+				output_prob = dictionary[state].get(word.upper(), 0)/tag_count[state]
 
-				output_prob = number_probability[state]/tag_count[state]
-				if is_number(word) == False:
-					output_prob = 1 - output_prob
+				#print (word, token_description_verbose[state], output_prob)
 
 				if i == 0:
 					V[i].append(output_prob * start_tag_count[state]/sum(start_tag_count))
@@ -158,6 +154,3 @@ def viderbi():
 		print ""
 
 viderbi()
-
-
-
