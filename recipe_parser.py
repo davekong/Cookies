@@ -20,7 +20,7 @@ token_map = {
 	"b" : Boring
 }
 
-tokens = { Unit, Quantity, Food, Modifier, Time, Degrees, Boring }
+tokens = (Unit, Quantity, Food, Modifier, Time, Degrees, Boring)
 
 token_description = ["U", "Q", "F", "M", "T", "D", "B"]
 
@@ -45,7 +45,6 @@ def parse_learning_data(f):
 		for word in line.split():
 			word_parts = word.split("_")
 			token = Boring
-
 			word = word_parts[0]
 			if (len(word_parts) > 1):
 				token = token_map.get(word_parts[1][0], Boring)
