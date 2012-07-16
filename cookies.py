@@ -12,34 +12,32 @@ def words_with_token(line, token):
 def output_results(filepath):
 	results = rp.tag_file(filepath)
 	if results is None:
-		return 0
+		return []
 
-	found_line = 0
+	parsed_results = []
+
 	for line in results:
 		
-		parsed_line = []
-		for tagged_pair in line:
-			(word, token) = tagged_pair
-			#print("(%s : %s)" % (word, token)),
-		#print ""
-		
+		parsed_line = []		
 
-		food = ' '.join(words_with_token(line, rp.Food))
-		quantity = ' '.join(words_with_token(line, rp.Quantity))
-		unit = ' '.join(words_with_token(line, rp.Unit))
-		modifier = ' '.join(words_with_token(line, rp.Modifier))
-		time = ' '.join(words_with_token(line, rp.Time))
-		degrees = ' '.join(words_with_token(line, rp.Degrees))
+		food = words_with_token(line, rp.Food)
+		quantity = words_with_token(line, rp.Quantity)
+		unit = words_with_token(line, rp.Unit)
+		modifier = words_with_token(line, rp.Modifier)
+		time = words_with_token(line, rp.Time)
+		degrees = words_with_token(line, rp.Degrees)
 		
-		if len(food) > 0:
-			print(quantity, unit, modifier, food)
-			found_line += 1
+		if len(unit) > 0 and len(time) == 0 and len(degrees) == 0:
+			parsed_results.append({ rp.Quantity: quantity,
+							 rp.Unit: unit,
+							 rp.Modifier: modifier,
+							 rp.Food : food })
 		elif len(time) > 0:
-			print(time + " minutes")
+			parsed_results.append({ rp.Time : time })
 		elif len(degrees) > 0:
-			print(degrees + " degrees")
+			parsed_results.append({ rp.Degrees : degrees })
 
-	return found_line
+	return parsed_results
 
 tag_folder = "tagged_recipes"
 tag_files = os.listdir(tag_folder)
@@ -50,5 +48,8 @@ for filename in tag_files:
 plain_folder = "recipes"
 plain_files = os.listdir(plain_folder)
 for plain_filename in plain_files:
-	output_results(plain_folder + "/" + plain_filename)
-	print ""
+	print("%s:" % plain_filename)
+	output = output_results(plain_folder + "/" + plain_filename)
+	for line in output:
+		print line
+	print("")
