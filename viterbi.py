@@ -13,18 +13,6 @@ emission_probability = {
    'Healthy' : {'normal': 0.5, 'cold': 0.4, 'dizzy': 0.1},
    'Fever' : {'normal': 0.1, 'cold': 0.3, 'dizzy': 0.6},
    }
-
- # Helps visualize the steps of Viterbi.
-def print_dptable(V):
-    print "    ",
-    for i in range(len(V)): print "%7d" % i,
-    print
- 
-    for y in V[0].keys():
-        print "%.5s: " % y,
-        for t in range(len(V)):
-            print "%.7s" % ("%f" % V[t][y]),
-        print
  
 def viterbi(obs, states, start_p, trans_p, emit_p):
     V = [{}]
@@ -48,7 +36,7 @@ def viterbi(obs, states, start_p, trans_p, emit_p):
         # Don't need to remember the old paths
         path = newpath
 
-    print_dptable(V)
+    print path
     (prob, state) = max([(V[len(obs) - 1][y], y) for y in states])
     return (prob, path[state])
 

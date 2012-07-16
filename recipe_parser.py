@@ -66,38 +66,44 @@ def clean(word):
 	s = ''.join(ch for ch in word if ch in valid_characters)
 	return s
 
-# Calculate the probability of a tuple occurance
+# Populates all of the relevant statistics from a parsed file
 def learn(parsed_lines):
 	for line in parsed_lines:
 		for i in range(len(line)):
-			if i == 0:
-				gram = line[0]
-				(word, token) = gram
+			(word, token) = line[i]
 
+			clean_word = clean(word)
+			count = dictionary[token].get(clean_word, 0)
+			dictionary[token][clean_word] = count+1
+
+			count = tag_count[token]
+			tag_count[token] = count+1
+
+			if i == 0:
 				count = start_tag_count[token]
 				start_tag_count[token] = count + 1
-
-				count = tag_count[token]
 			else:
-				gram1 = line[i-1]
-				gram2 = line[i]
+				(pword, ptoken) = line[i-1]
 
-				(word1, token1) = gram1
-				(word2, token2) = gram2
+				prob = tuples[ptoken].get(token, 0)
+				tuples[ptoken][token] = prob+1
 
-				prob = tuples[token1].get(token2, 0)
-				tuples[token1][token2] = prob+1
-
-				clean_word = clean(word2)
-				count = dictionary[token2].get(clean_word, 0)
-				dictionary[token2][clean_word] = count+1
-
-				count = tag_count[token2]
-				tag_count[token2] = count+1
 
 def total_tag_count():
 	sum(tag_count[token] for token in tokens)
 
+def print_dptable(V):
+    print "    ",
+    for i in range(len(V)): print "%7d" % i,
+    print
+ 
+    for y in V[0].keys():
+        print "%.5s: " % y,
+        for t in range(len(V)):
+            print "%.7s" % ("%f" % V[t][y]),
+        print
+
+# This was modeled after the example at http://en.wikipedia.org/wiki/Viterbi_algorithm
 def viterbi(states, output, output_prob, tuple_probability, start_probability):
 	if len(output) == 0:
 		return []
@@ -108,16 +114,19 @@ def viterbi(states, output, output_prob, tuple_probability, start_probability):
 	for i in range(len(output)):
 		V.append({})
 		word = clean(output[i])
+		newpath = {}
 		
-		for state in states: #for each state
+		for state in states:
 			probability = output_prob.get(state, {}).get(word, 0)
 			if i == 0:
 				V[i][state] = (probability * start_probability[state])
-				path[state] = [state]
+				newpath[state] = [state]
 			else:
-				(prob, best_state) = max((V[i-1][s] * probability * tuple_probability[s][state], s) for s in states)
+				(prob, best_state) = max([(V[i-1][s] * probability * tuple_probability[s][state], s) for s in states])
 				V[i][state] = prob
-				path[state] = path[best_state] + [state]
+				newpath[state] = path[best_state] + [state]
+		
+		path = newpath
 
 	(prob, state) = max([(V[len(output) - 1][y], y) for y in states])
 	final_path = path[state]
@@ -136,13 +145,17 @@ def tag_file(path):
 	start_probability = {}
 
 	for token in tokens:
+		count = tag_count[token]
+		if count == 0:
+			count = 1
+
 		output_probability[token] = {}
 		tuple_probability[token] = {}
 		start_probability[token] = start_tag_count[token]/sum(start_tag_count.get(t, 0) for t in tokens)
 		for word in dictionary[token]:
-			output_probability[token][word] = dictionary[token].get(word, 0)/tag_count[token]
+			output_probability[token][word] = dictionary[token].get(word, 0)/count
 		for token2 in tokens:
-			tuple_probability[token][token2] = tuples[token].get(token2, 0)/tag_count[token]
+			tuple_probability[token][token2] = tuples[token].get(token2, 0)/count
 
 	for line in output_file:
 		return [viterbi(tokens, line.split(), output_probability, tuple_probability, start_probability)
