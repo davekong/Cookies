@@ -113,6 +113,7 @@ def viterbi(states, output, output_prob, tuple_probability, start_probability):
 
 	for i in range(len(output)):
 		V.append({})
+
 		word = clean(output[i])
 		newpath = {}
 		probability = {}
@@ -133,7 +134,7 @@ def viterbi(states, output, output_prob, tuple_probability, start_probability):
 				(prob, best_state) = max([(V[i-1][s] * probability[state] * tuple_probability[s][state], s) for s in states])
 				V[i][state] = prob
 				newpath[state] = path[best_state] + [state]
-		
+
 		path = newpath
 
 	(prob, state) = max([(V[len(output) - 1][y], y) for y in states])
