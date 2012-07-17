@@ -3,6 +3,9 @@ import recipe_parser as rp
 from random import choice
 import string
 from fractions import Fraction
+import recipe
+import ingredient
+
 
 def words_with_token(line, token):
 	words = []
@@ -11,17 +14,15 @@ def words_with_token(line, token):
 			words.append(w)
 	return words
 
+#TODO: Move this into recipe_parser.py so it's returned by tag_file()
 def output_results(filepath):
 	results = rp.tag_file(filepath)
 	if results is None:
 		return []
 
-	parsed_results = []
+	recipe = Recipe()
 
 	for line in results:
-		
-		parsed_line = []		
-
 		food = words_with_token(line, rp.Food)
 		quantity = words_with_token(line, rp.Quantity)
 		unit = words_with_token(line, rp.Unit)
@@ -30,17 +31,17 @@ def output_results(filepath):
 		degrees = words_with_token(line, rp.Degrees)
 		
 		if len(unit) > 0 and len(time) == 0 and len(degrees) == 0:
-			parsed_results.append({ rp.Quantity: quantity,
-							 rp.Unit: unit,
-							 rp.Modifier: modifier,
-							 rp.Food : food })
+			ingredient = Ingredient()
+			ingredient.food = ' '.join(food)
+			ingredient.unit = Unit.parse(unit)
+			ingredient.quantity = sum(map(parse_number(quantity)))
+			ingredient.modifier = ' '.join(modifier) 
 		elif len(time) > 0:
-			parsed_results.append({ rp.Time : time })
+			recipe.baking_time = parse_number(time)
 		elif len(degrees) > 0:
-			parsed_results.append({ rp.Degrees : degrees })
-
+			recipe.degrees = parse_number(degrees)
 	return parsed_results
-
+	
 valid_digits = set(string.digits).union(set('/'))
 def clean_number(string):
 	return ''.join(ch for ch in string if ch in valid_digits)
@@ -52,9 +53,10 @@ def parse_number(string):
 
 	return float(Fraction(string))
 
+# Takes ingredient line dict as argument
 def print_ingredient_line(line):
-	print line
-	
+	#print line
+
 	quantities = map(parse_number, line.get(rp.Quantity, []))
 	units = line.get(rp.Unit, [])
 	modifier = ' '.join(line.get(rp.Modifier, []))
@@ -95,7 +97,7 @@ for plain_filename in plain_files:
 	print("%s:" % plain_filename)
 	recipe = output_results(plain_folder + "/" + plain_filename)
 	for line in recipe:
-		if rp.Food in line:
+		if rp.Food in line or if rp.Modifier in line:
 			print_ingredient_line(line)
 		elif rp.Time in line:
 			print_time_line(line)
