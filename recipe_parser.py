@@ -1,5 +1,6 @@
 from __future__ import division
 import string
+import re
 
 #Tag types
 Unit = "Unit"
@@ -59,6 +60,9 @@ def is_number(word):
 			return True
 		except ValueError:
 			return False
+
+def strip_parens(line):
+	return re.sub("\(.*?\)",'',line)
 
 valid_characters = set(string.letters).union(string.digits)
 def clean(word):
@@ -167,6 +171,6 @@ def tag_file(path):
 			tuple_probability[token][token2] = tuples[token].get(token2, 0)/count
 
 	for line in output_file:
-		return [viterbi(tokens, line.split(), output_probability, tuple_probability, start_probability)
+		return [viterbi(tokens, strip_parens(line).split(), output_probability, tuple_probability, start_probability)
 			for line in output_file]
 

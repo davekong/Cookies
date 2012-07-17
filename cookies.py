@@ -1,4 +1,4 @@
-import os
+import os, sys
 import recipe_parser as rp
 from random import choice
 import string
@@ -33,7 +33,7 @@ def output_results(filepath):
 
 		if len(quantity) > 0:
 			ingredient = Ingredient()
-			ingredient.food = ' '.join(food)
+			ingredient.food = clean_text(' '.join(food))
 			ingredient.unit = Unit.parse(unit)
 			ingredient.quantity = sum(map(parse_number, quantity))
 			ingredient.modifier = ' '.join(modifier)
@@ -50,6 +50,10 @@ valid_digits = set(string.digits).union(set('/'))
 def clean_number(string):
 	return ''.join(ch for ch in string if ch in valid_digits)
 
+def clean_text(text):
+	punc = set(string.punctuation)
+	return ''.join(ch for ch in text if ch not in punc).lower()
+
 def parse_number(string):
 	string = clean_number(string)
 	if len(string) == 0:
@@ -57,7 +61,10 @@ def parse_number(string):
 
 	return float(Fraction(string))
 
-tag_folder = "tagged_recipes"
+if len(sys.argv) < 2: 
+	tag_folder = "tagged_recipes"
+else :
+	tag_folder = sys.argv[1]
 tag_files = os.listdir(tag_folder)
 
 for filename in tag_files:
@@ -65,10 +72,18 @@ for filename in tag_files:
 
 plain_folder = "recipes"
 plain_files = os.listdir(plain_folder)
+recipes = []
+
 for plain_filename in plain_files:
 	print("%s:" % plain_filename)
 	recipe = output_results(plain_folder + "/" + plain_filename)
 	if recipe is None:
 		continue
+	recipes.append(recipe)
 	for ing in recipe.ingredients:
 		print("%.2f %s %s %s" % (ing.quantity, ing.unit, ing.modifier, ing.food))
+
+for r1 in recipes:
+	for r2 in recipes:
+		val = r1.compare(r2)
+		print val

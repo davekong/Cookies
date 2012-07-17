@@ -9,6 +9,13 @@ class Unit:
 	CUP = 'cup'
 	LB = 'lb'
 
+	TSP_CONVERSION = { ITEM : 1.0, 
+										 TSP  : 1.0,
+										 OZ   : 6.0,
+										 TBSP : 3.0,
+										 CUP  : 48.0,
+										 LB   : 96.0}
+
 	@staticmethod
 	def chk_str(array,unit):
 		for test in array:
@@ -35,6 +42,14 @@ class Unit:
 		else:
 			return Unit.ITEM
 		
+	@staticmethod
+	def convert(qty, from_unit, to_unit):
+		if from_unit == to_unit:
+			return qty
+		if from_unit == Unit.ITEM or to_unit == Unit.ITEM:
+			return qty # Converting to/from items is meaningless
+		tsp_amount = Unit.TSP_CONVERSION[from_unit] * qty
+		return tsp_amount / Unit.TSP_CONVERSION[to_unit]
 
 class Ingredient:
 #constructor (init)
@@ -49,3 +64,4 @@ class Ingredient:
 		# update quantity
 		# update to new unit
 		return
+	
