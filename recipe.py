@@ -1,26 +1,24 @@
 #imports
-import ingredient
+from ingredient import Ingredient, Unit
 
 class Recipe:
-#properties
 
 #constructor (init)
-	def __init__(ingredients = [], baking_time = 0, temperature = 0):
-		apply(add_ingredient, ingredients)
+	def __init__(self, ingredients = [], baking_time = 0, temperature = 0):
+		self.ingredients = []
+		for ing in ingredients:
+			self.add_ingredient(ing)
 		self.baking_time = baking_time
 		self.temperature = temperature
 
-#getters & setters
-
-
 #utility functions
-	def add_ingredient(ingredient):
-		if type(ingredient) == Ingredient:
-			ingredients.append(ingredient)
+	def add_ingredient(self, ingredient):
+		if ingredient.__class__ is Ingredient:
+			self.ingredients.append(ingredient)
 		else:
-			raise Exception("This is not an ingredient")
+			raise Exception("This is not an ingredient, it is a %s" % ingredient.__class__)
 
-	def add_ingredients(*ingreds):
+	def add_ingredients(self, *ingreds):
 		for ingredient in ingreds:
 			self.add_ingredient(ingredient)
 

@@ -3,8 +3,8 @@ import recipe_parser as rp
 from random import choice
 import string
 from fractions import Fraction
-import recipe
-import ingredient
+from recipe import Recipe
+from ingredient import Ingredient, Unit
 
 
 def words_with_token(line, token):
@@ -18,7 +18,7 @@ def words_with_token(line, token):
 def output_results(filepath):
 	results = rp.tag_file(filepath)
 	if results is None:
-		return []
+		return None
 
 	recipe = Recipe()
 
@@ -30,17 +30,21 @@ def output_results(filepath):
 		time = words_with_token(line, rp.Time)
 		degrees = words_with_token(line, rp.Degrees)
 		
-		if len(unit) > 0 and len(time) == 0 and len(degrees) == 0:
+
+		if len(quantity) > 0:
 			ingredient = Ingredient()
 			ingredient.food = ' '.join(food)
 			ingredient.unit = Unit.parse(unit)
-			ingredient.quantity = sum(map(parse_number(quantity)))
-			ingredient.modifier = ' '.join(modifier) 
+			ingredient.quantity = sum(map(parse_number, quantity))
+			ingredient.modifier = ' '.join(modifier)
+
+			recipe.add_ingredient(ingredient)
 		elif len(time) > 0:
 			recipe.baking_time = parse_number(time)
 		elif len(degrees) > 0:
-			recipe.degrees = parse_number(degrees)
-	return parsed_results
+			recipe.temperature = parse_number(degrees)
+	print recipe
+	return recipe
 	
 valid_digits = set(string.digits).union(set('/'))
 def clean_number(string):
@@ -53,54 +57,18 @@ def parse_number(string):
 
 	return float(Fraction(string))
 
-# Takes ingredient line dict as argument
-def print_ingredient_line(line):
-	#print line
-
-	quantities = map(parse_number, line.get(rp.Quantity, []))
-	units = line.get(rp.Unit, [])
-	modifier = ' '.join(line.get(rp.Modifier, []))
-	food = ' '.join(line.get(rp.Food, modifier)) # If food is missing, try the modifier.
-
-	if len(units) == 1:
-		quantity = sum(quantities)
-		unit = units[0]
-		print("%.2f %s %s %s" % (quantity, unit, modifier, food))
-	elif len(units) == len(quantities):
-		unit_line = []
-		for unit, quantity in range(len(quantities)):
-			unit_line += ["%.2f %s" % (unit, quantity)]
-
-		print("%s %s %s" % (' or '.join(unit_line), modifier, food))
-
-	## TODO: What happens when there is more than one unit?
-	## and what if units != quantities?
-	
-
-
-
-def print_degree_line(line):
-	print "degrees"
-
-def print_time_line(line):
-	print "time"
-
 tag_folder = "tagged_recipes"
 tag_files = os.listdir(tag_folder)
 
 for filename in tag_files:
 	rp.learn_from_file(tag_folder + "/" + filename)
 
-plain_folder = "test_recipes"
+plain_folder = "recipes"
 plain_files = os.listdir(plain_folder)
 for plain_filename in plain_files:
 	print("%s:" % plain_filename)
 	recipe = output_results(plain_folder + "/" + plain_filename)
-	for line in recipe:
-		if rp.Food in line or if rp.Modifier in line:
-			print_ingredient_line(line)
-		elif rp.Time in line:
-			print_time_line(line)
-		elif rp.Degrees in line:
-			print_degree_line(line)
-	print("")
+	if recipe is None:
+		continue
+	for ing in recipe.ingredients:
+		print("%.2f %s %s %s" % (ing.quantity, ing.unit, ing.modifier, ing.food))
