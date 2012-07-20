@@ -1,7 +1,13 @@
+ # coding=utf-8
+
 from __future__ import division
 import string
 import re
 from bs4 import BeautifulSoup
+from recipe import Recipe
+from ingredient import Ingredient
+from ingredient import Unit as u
+from fractions import Fraction
 
 #Tag types
 Unit = "Unit"
@@ -151,6 +157,90 @@ def viterbi(states, output, output_prob, tuple_probability, start_probability):
 def learn_from_file(path):
 	data = parse_learning_data(open(path))
 	learn(data)
+
+def parse_recipe(filepath):
+	results = tag_file(filepath)
+	if results is None:
+		return None
+
+	recipe = Recipe()
+
+	for line in results:
+		food = words_with_token(line, Food)
+		quantity = words_with_token(line, Quantity)
+		unit = words_with_token(line, Unit)
+		modifier = words_with_token(line, Modifier)
+		time = words_with_token(line, Time)
+		degrees = words_with_token(line, Degrees)
+		
+
+		if len(quantity) > 0:
+			ingredient = Ingredient()
+			
+			if len(food) == 0:
+				if len(modifier) > 0:
+					food = modifier
+					modifier = []
+				else:
+					continue
+
+			qty = sum(map(parse_number, quantity))
+			if qty == 0:
+				continue
+
+			ingredient.food = clean_text(' '.join(food))
+			ingredient.unit = u.parse(unit)
+			ingredient.quantity = qty
+			ingredient.modifier = ' '.join(modifier)
+
+			recipe.add_ingredient(ingredient)
+		
+		elif len(time) > 0:
+			recipe.baking_time = parse_number(time)
+		elif len(degrees) > 0:
+			recipe.temperature = parse_number(degrees)
+	
+	return recipe
+
+valid_digits = set(string.digits).union(set('/'))
+unicode_fraction=set([u'¼', u'½', u'¾', u'⅓', u'⅔'])
+def clean_number(string):
+	return ''.join(ch for ch in string if ch in valid_digits)
+
+def clean_text(text):
+	punc = set(string.punctuation)
+	return ''.join(ch for ch in text if ch not in punc).lower()
+
+def parse_number(string):
+	for ch in unicode_fraction:
+		if ch in string:
+			if string == u'¼':
+				return float(0.25)
+			if string == u'½':
+				return float(0.5)
+			if string == u'¾':
+				return float(0.75)
+			if string == u'⅓':
+				return float(Fraction('1/3'))
+			if string == u'⅔':
+				return float(Fraction('2/3'))
+
+	string = clean_number(string)
+	if len(string) == 0:
+		return 0
+
+	try:
+		return float(Fraction(string))
+	except ValueError:
+		'Attempted to parse an invalid fraction "%s"' % string
+		return 0
+
+def words_with_token(line, token):
+	words = []
+	for (w, t) in line:
+		if t == token:
+			words.append(w)
+	return words
 
 def tag_file(path):
 	output_file = open(path)
