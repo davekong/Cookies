@@ -61,6 +61,11 @@ def parse_number(string):
 
 	return float(Fraction(string))
 
+def process_files(filename, folder=None):
+		print("%s:" % filename)
+		path = filename if folder is None else os.path.join(folder,filename)
+		return output_results(path)
+
 if len(sys.argv) < 2: 
 	tag_folder = "tagged_recipes"
 else :
@@ -70,20 +75,31 @@ tag_files = os.listdir(tag_folder)
 for filename in tag_files:
 	rp.learn_from_file(tag_folder + "/" + filename)
 
-plain_folder = "recipes"
-plain_files = os.listdir(plain_folder)
+if len(sys.argv) < 3:
+	plain_folder = "recipes"
+else:
+	plain_folder = sys.argv[2]
+
 recipes = []
+if os.path.isdir(plain_folder):
+	print "%s is a folder" % (plain_folder)
+	plain_files = os.listdir(plain_folder)
+	for plain_filename in plain_files:
+		recipe = process_files(plain_filename, plain_folder)
+		if recipe is None:
+			continue
+		recipes.append(recipe)
+		for ing in recipe.ingredients:
+			print("%.2f %s %s %s" % (ing.quantity, ing.unit, ing.modifier, ing.food))
+	for r1 in recipes:
+		for r2 in recipes:
+			val = r1.compare(r2)
+			print val
+else :
+	plain_file = plain_folder
+	recipe = process_files(plain_file)
+	if recipe is not None:
+		for ing in recipe.ingredients:
+			print("%.2f %s %s %s" % (ing.quantity, ing.unit, ing.modifier, ing.food))
+	
 
-for plain_filename in plain_files:
-	print("%s:" % plain_filename)
-	recipe = output_results(plain_folder + "/" + plain_filename)
-	if recipe is None:
-		continue
-	recipes.append(recipe)
-	for ing in recipe.ingredients:
-		print("%.2f %s %s %s" % (ing.quantity, ing.unit, ing.modifier, ing.food))
-
-for r1 in recipes:
-	for r2 in recipes:
-		val = r1.compare(r2)
-		print val
