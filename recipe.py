@@ -31,7 +31,7 @@ class Recipe:
 	def quantity_of(self, ing, unit):
 		quantity = 0
 		for ingredient in self.ingredients:
-			if cmp_food(ing, ingredient.food):
+			if self.cmp_food(ing, ingredient.food):
 				quantity += Unit.convert(ingredient.quantity, ingredient.unit, unit)
 		return quantity
 

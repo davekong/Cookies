@@ -57,7 +57,6 @@ def output_results(filepath):
 		elif len(degrees) > 0:
 			recipe.temperature = parse_number(degrees)
 	
-	print recipe
 	return recipe
 	
 valid_digits = set(string.digits).union(set('/'))
@@ -79,6 +78,11 @@ def parse_number(string):
 		'Attempted to parse an invalid fraction "%s"' % string
 		return 0
 
+def process_files(filename, folder=None):
+		print("%s:" % filename)
+		path = filename if folder is None else os.path.join(folder,filename)
+		return output_results(path)
+
 if len(sys.argv) < 2: 
 	tag_folder = "tagged_recipes"
 else :
@@ -90,13 +94,25 @@ for filename in tag_files:
 
 plain_folder = "test_recipes"
 plain_files = os.listdir(plain_folder)
-recipes = []
+if len(sys.argv) < 3:
+	plain_folder = "recipes"
+else:
+	plain_folder = sys.argv[2]
 
-for plain_filename in plain_files:
-	print("%s:" % plain_filename)
-	recipe = output_results(plain_folder + "/" + plain_filename)
-	if recipe is None:
-		continue
-	recipes.append(recipe)
-	for ing in recipe.ingredients:
-		print("%.2f %s %s %s" % (ing.quantity, ing.unit, ing.modifier, ing.food))
+recipes = []
+if os.path.isdir(plain_folder):
+	print "%s is a folder" % (plain_folder)
+	plain_files = os.listdir(plain_folder)
+	for plain_filename in plain_files:
+		recipe = process_files(plain_filename, plain_folder)
+		if recipe is None:
+			continue
+		recipes.append(recipe)
+		for ing in recipe.ingredients:
+			print("%.2f %s %s %s" % (ing.quantity, ing.unit, ing.modifier, ing.food))
+else :
+	plain_file = plain_folder
+	recipe = process_files(plain_file)
+	if recipe is not None:
+		for ing in recipe.ingredients:
+			print("%.2f %s %s %s" % (ing.quantity, ing.unit, ing.modifier, ing.food))
