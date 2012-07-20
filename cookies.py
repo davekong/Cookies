@@ -1,3 +1,5 @@
+ # coding=utf-8
+
 import os, sys
 import recipe_parser as rp
 from random import choice
@@ -60,6 +62,7 @@ def output_results(filepath):
 	return recipe
 	
 valid_digits = set(string.digits).union(set('/'))
+unicode_fraction=set([u'¼', u'½', u'¾', u'⅓', u'⅔'])
 def clean_number(string):
 	return ''.join(ch for ch in string if ch in valid_digits)
 
@@ -68,6 +71,19 @@ def clean_text(text):
 	return ''.join(ch for ch in text if ch not in punc).lower()
 
 def parse_number(string):
+	for ch in unicode_fraction:
+		if ch in string:
+			if string == u'¼':
+				return float(0.25)
+			if string == u'½':
+				return float(0.5)
+			if string == u'¾':
+				return float(0.75)
+			if string == u'⅓':
+				return float(Fraction("1/3"))
+			if string == u'⅔':
+				return float(Fraction("2/3"))
+
 	string = clean_number(string)
 	if len(string) == 0:
 		return 0

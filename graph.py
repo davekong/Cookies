@@ -90,7 +90,8 @@ for i in range(len(recipes)):
 		(r2_name, r2) = recipes[j]
 
 		val = r1.compare(r2)
-		graph.addEdge(str(i)+str(j), str(i), str(j), str(val))
+		if val > 0:
+			graph.addEdge(str(i)+str(j), str(i), str(j), str(val))
 
 output_file = open("graph.gexf", "w")
 gexf.write(output_file)
