@@ -4,3 +4,6 @@ build
 include
 lib
 .Python
+
+# ignore downloaded files
+downloaded_recipes
