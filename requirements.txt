@@ -1,0 +1,5 @@
+lxml==2.3.4
+matplotlib==1.2.x
+numpy==1.6.2
+pygexf==0.2.2
+wsgiref==0.1.2

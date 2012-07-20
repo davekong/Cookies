@@ -70,10 +70,6 @@ class Recipe:
 			for ing in recipe:
 				qty = recipe[ing]
 				recipe[ing] = qty / scale_value
-		
-		print ''
-		print r1
-		print r2 
 
 		count = len(r1_ings.union(r2_ings))
 
