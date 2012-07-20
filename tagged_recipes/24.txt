@@ -4,10 +4,10 @@ Ingredients
     3_q cups_u all-purpose_m flour_f
     1_q 1/2_q teaspoons_u baking soda
     1_q 1/2_q teaspoons_u salt
-    2_q sticks (1_q cup_u) unsalted butter, melted and cooled slightly
+    2_q sticks_u (1_q cup_u) unsalted butter, melted and cooled slightly
     1_q 1/2_q cups_u packed light brown sugar
     1_q cup_u granulated sugar
-    3_q large_u eggs
+    3_q large_u eggs_f
     1_q 1/2_q teaspoons_u vanilla
     2_q 1/2_q cups_u semisweet chocolate chips (16 ounces)
 

@@ -8,13 +8,15 @@ class Unit:
 	TBSP = 'tbsp'
 	CUP = 'cup'
 	LB = 'lb'
+	STICK = 'stick'
 
-	TSP_CONVERSION = { ITEM : 1.0, 
-										 TSP  : 1.0,
-										 OZ   : 6.0,
-										 TBSP : 3.0,
-										 CUP  : 48.0,
-										 LB   : 96.0}
+	TSP_CONVERSION = { ITEM  : 1.0, 
+										 TSP   : 1.0,
+										 OZ    : 6.0,
+										 TBSP  : 3.0,
+										 CUP   : 48.0,
+										 LB    : 96.0,
+										 STICK : 24.0}
 
 	@staticmethod
 	def chk_str(array,unit):
@@ -39,6 +41,8 @@ class Unit:
 			return Unit.OZ
 		elif Unit.chk_str(["pound", "lb"], unit):
 			return Unit.LB
+		elif Unit.chk_str(["stick"], unit):
+			return Unit.STICK
 		else:
 			return Unit.ITEM
 		

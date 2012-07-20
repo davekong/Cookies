@@ -33,16 +33,30 @@ def output_results(filepath):
 
 		if len(quantity) > 0:
 			ingredient = Ingredient()
+			
+			if len(food) == 0:
+				if len(modifier) > 0:
+					food = modifier
+					modifier = []
+				else:
+					continue
+
+			qty = sum(map(parse_number, quantity))
+			if qty == 0:
+				continue
+
 			ingredient.food = clean_text(' '.join(food))
 			ingredient.unit = Unit.parse(unit)
-			ingredient.quantity = sum(map(parse_number, quantity))
+			ingredient.quantity = qty
 			ingredient.modifier = ' '.join(modifier)
 
 			recipe.add_ingredient(ingredient)
+		
 		elif len(time) > 0:
 			recipe.baking_time = parse_number(time)
 		elif len(degrees) > 0:
 			recipe.temperature = parse_number(degrees)
+	
 	print recipe
 	return recipe
 	
@@ -59,7 +73,11 @@ def parse_number(string):
 	if len(string) == 0:
 		return 0
 
-	return float(Fraction(string))
+	try:
+		return float(Fraction(string))
+	except ValueError:
+		'Attempted to parse an invalid fraction "%s"' % string
+		return 0
 
 if len(sys.argv) < 2: 
 	tag_folder = "tagged_recipes"
@@ -70,7 +88,7 @@ tag_files = os.listdir(tag_folder)
 for filename in tag_files:
 	rp.learn_from_file(tag_folder + "/" + filename)
 
-plain_folder = "recipes"
+plain_folder = "test_recipes"
 plain_files = os.listdir(plain_folder)
 recipes = []
 
@@ -82,8 +100,3 @@ for plain_filename in plain_files:
 	recipes.append(recipe)
 	for ing in recipe.ingredients:
 		print("%.2f %s %s %s" % (ing.quantity, ing.unit, ing.modifier, ing.food))
-
-for r1 in recipes:
-	for r2 in recipes:
-		val = r1.compare(r2)
-		print val

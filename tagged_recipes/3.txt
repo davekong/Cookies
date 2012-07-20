@@ -5,7 +5,7 @@ Ingredients
     3/4_q cup_u white_m sugar_f
     3/4_q cup_u packed_m brown_m sugar_f
     1_q teaspoon_u vanilla_f extract_f
-    2_q eggs_u
+    2_q eggs_f
     2_q 1/4_q cups all-purpose_m flour_f
     1_q teaspoon_u salt_f
     1_q teaspoon_u baking_f soda_f

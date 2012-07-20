@@ -3,7 +3,7 @@ Ingredients
 2_q 1/4_q cups_u all-purpose_m flour_f
 1_q teaspoon_u baking_f soda_f
 1_q teaspoon_u salt_f
-1_q cup_u (2 sticks) butter_f, softened_m
+1_q cup_u (2 sticks_u) butter_f, softened_m
 3/4_q cup_u granulated_m sugar_f
 3/4_q cup_u packed_m brown_m sugar_f
 1_q teaspoon_u vanilla_f extract_f

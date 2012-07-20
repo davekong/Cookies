@@ -3,7 +3,7 @@ Ingredients
     2_q 1/2_q cup_u all-purpose_m flour_f
     1_q teaspoon_u baking_f soda_f
     1_q teaspoon_u salt_f
-    1_q cup_u (2 sticks) unsalted_m butter_f, room_m temperature_m
+    1_q cup_u (2 sticks_u) unsalted_m butter_f, room_m temperature_m
     1_q 1/2_q cups_u brown_m sugar_f
     1/2_q cup_u sugar_f
     2_q large_m eggs_f
@@ -14,7 +14,7 @@ Directions
 
 Preheat the oven to 375_d degrees F_u.
 
-Line baking sheets with parchment or silicone baking sheets or spray cookie sheets with nonstick cooking spray.
+Line baking sheets with parchment or silicone baking sheets or spray cookie sheets with nonstick_u cooking spray.
 
 Put the flour, baking soda, and salt into a bowl and stir it with a whisk to combine. Set aside.
 

@@ -1,6 +1,7 @@
 from __future__ import division
 import string
 import re
+from bs4 import BeautifulSoup
 
 #Tag types
 Unit = "Unit"
@@ -153,6 +154,13 @@ def learn_from_file(path):
 
 def tag_file(path):
 	output_file = open(path)
+	soup = BeautifulSoup(output_file)
+	if soup is None:
+		return []
+
+	clean_text = soup.get_text()
+	clean_text = strip_parens(clean_text)
+
 	output_probability = {}
 	tuple_probability = {}
 	start_probability = {}
@@ -170,7 +178,6 @@ def tag_file(path):
 		for token2 in tokens:
 			tuple_probability[token][token2] = tuples[token].get(token2, 0)/count
 
-	for line in output_file:
-		return [viterbi(tokens, strip_parens(line).split(), output_probability, tuple_probability, start_probability)
-			for line in output_file]
+	return [viterbi(tokens, line.split(), output_probability, tuple_probability, start_probability)
+		for line in clean_text.split('\n')]
 
