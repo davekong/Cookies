@@ -27,6 +27,7 @@ for plain_filename in plain_files:
 gexf = g.Gexf("Hackerschool", "Chocolate Chip Cookie Recipes") 
 graph = gexf.addGraph("undirected","static","Chocolate Chip Cookie Recipes")
 dupeAttr = graph.addNodeAttribute("duplicates", '0', "Integer")
+ingAttr = graph.addNodeAttribute("ingredients", '', "String")
 
 non_duplicate_recipes = set(recipes)
 duplicate_count = {}
@@ -68,6 +69,9 @@ for i in range(len(non_duplicate_recipes)):
 	n = graph.addNode(str(i), recipe_name)
 	dupe_count = duplicate_count.get(recipe_name, 0)
 	n.addAttribute(dupeAttr, str(dupe_count))
+	n.addAttribute(ingAttr, ', '.join(
+		['%.2f %s %s' % (ing.quantity, ing.unit, ing.food) for ing in recipe.ingredients]))
+
 
 # Calculate the difference between all the remaining nodes
 print('Adding edges...')
