@@ -1,6 +1,4 @@
 beautifulsoup4==4.1.1
-matplotlib==1.1.0
-numpy==1.6.2
 pycurl==7.19.0
 pygexf==0.2.2
 wsgiref==0.1.2

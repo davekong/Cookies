@@ -129,11 +129,13 @@ def viterbi(states, output, output_prob, tuple_probability, start_probability):
 		newpath = {}
 		probability = {}
 
+		prob_sum = 0
 		for state in states:
 			probability[state] = output_prob.get(state, {}).get(word, 0)
+			prob_sum += probability[state]
 
 		# Handle unkown words
-		if sum([probability[state] for state in states]) == 0:
+		if prob_sum == 0:
 			for state in states:
 				probability[state] = 1.0
 		
@@ -248,7 +250,7 @@ def tag_file(path):
 	if soup is None:
 		return []
 
-	clean_text = soup.get_text()
+	clean_text = '\n'.join(soup.findAll(text=True))
 	clean_text = strip_parens(clean_text)
 
 	output_probability = {}

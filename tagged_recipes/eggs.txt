@@ -1,0 +1,14 @@
+5_q eggs_f
+1_q egg_f
+1_q eggs_f
+2_q eggs_f
+1_q white_m egg_f
+2_q speckled_m eggs_f
+5_q quail_m eggs_f
+2_q ostrich_m eggs_f
+1_q egg_f
+2_q egg_f
+3_q egg_f
+4_q egg_f
+5_q egg_f
+
